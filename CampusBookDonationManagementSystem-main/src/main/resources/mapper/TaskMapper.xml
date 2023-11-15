@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="xyz.zrxjuly.dao.ITaskDao" >
+    <sql id="dynamicWhere">
+        <where>
+            <!-- 如果传入的key参数不为空，就按照key模糊匹配child_name字段 -->
+            <if test="key != null and key != ''">
+                and (child_name like concat('%', ${key}, '%'))
+            </if>
+        </where>
+    </sql>
+
+    <select id="findLearningTask" parameterType="String" resultType="LearningTask">
+        SELECT id, context, child_name, start_date, end_date
+        FROM learning_task
+        WHERE child_name=#{key}
+        ORDER BY start_date DESC
+    </select>
+
+    <select id="findInteractTask" parameterType="String" resultType="InteractTask">
+        SELECT id, context, child_name, volunteer_name, start_date, end_date
+        FROM interact_task
+        WHERE child_name=#{key}
+        ORDER BY start_date DESC
+    </select>
+
+<!--    <select id="findLearningTask" parameterType="string" resultType="LearningTask">-->
+<!--        select id, child_name, context, start_date, end_date from learning_task-->
+<!--        &lt;!&ndash; 引用上面定义的sql片段 &ndash;&gt;-->
+<!--        <include refid="dynamicWhere"/>-->
+<!--    </select>-->
+
+    <!-- 查询所有学习任务 -->
+    <select id="getAllLearningTask" resultType="LearningTask">
+        SELECT id,context,child_name,start_date, end_date
+        FROM learning_task
+    </select>
+
+    <!-- 查询所有交互任务 -->
+    <select id="getAllInteractTask" resultType="InteractTask">
+        SELECT id,context,child_name,volunteer_name,start_date, end_date
+        FROM interact_task
+    </select>
+
+    <select id="adminGetLearningTaskById" parameterType="String" resultType="LearningTask">
+        SELECT id,child_name,context,start_date, end_date
+        FROM learning_task
+        WHERE id = #{id}
+    </select>
+
+    <select id="adminGetInteractTaskById" parameterType="String" resultType="InteractTask">
+        SELECT id,child_name,volunteer_name,context,start_date, end_date
+        FROM interact_task
+        WHERE id = #{id}
+    </select>
+
+    <update id="editLearningTaskInfo" parameterType="LearningTask">
+        UPDATE learning_task
+        SET context = #{context}, end_date = #{end_date}
+        WHERE id = #{id}
+    </update>
+
+    <update id="editInteractTaskInfo" parameterType="InteractTask">
+        UPDATE interact_task
+        SET volunteer_name = #{volunteer_name}, context = #{context},
+            end_date = #{end_date}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="adminDelLearningTaskById" parameterType="String">
+        DELETE FROM learning_task
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="adminDelInteractTaskById" parameterType="String">
+        DELETE FROM interact_task
+        WHERE id = #{id}
+    </delete>
+
+    <insert id="createLearningTask" parameterType="LearningTask">
+        insert into learning_task(id, context, child_name, start_date, end_date)
+        values(#{id}, #{context}, #{child_name}, #{start_date}, #{end_date})
+    </insert>
+
+    <insert id="createInteractTask" parameterType="InteractTask">
+        insert into interact_task(id, context, child_name, volunteer_name, start_date, end_date)
+        values(#{id}, #{context}, #{child_name}, #{volunteer_name}, #{start_date}, #{end_date})
+    </insert>
+
+    <select id="selectByPrimaryKey" parameterType="Integer" resultType="User">
+		SELECT * FROM user WHERE id = #{userId}
+	</select>
+
+    <select id="selectUserByAccount" parameterType="xyz.zrxjuly.pojo.User" resultType="xyz.zrxjuly.pojo.User">
+		SELECT * FROM t_user WHERE u_account = #{u_account}
+	</select>
+</mapper>

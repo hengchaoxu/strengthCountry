@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.zrxjuly.dao.ChildrenEntityMapper">
+
+    <sql id="Base_Column_List">
+
+    </sql>
+    <sql id="Blob_Column_List">
+
+    </sql>
+    <insert id="insertSelective" parameterType="xyz.zrxjuly.dao.entity.ChildrenEntity">
+        insert into children_info(children_account, children_password, children_name, children_gender, children_email, children_creation_date, children_birthday, children_age, children_picture, children_description, children_school, children_address, children_identity, children_created_by)
+        values(#{children_account,jdbcType=VARCHAR}, #{children_password,jdbcType=VARCHAR}, #{children_name,jdbcType=VARCHAR}, #{children_gender,jdbcType=VARCHAR}, #{children_email,jdbcType=VARCHAR}, #{children_creation_date,jdbcType=TIMESTAMP}, #{children_birthday,jdbcType=TIMESTAMP}, #{children_age,jdbcType=VARCHAR}, #{children_picture,jdbcType=VARCHAR}, #{children_description,jdbcType=VARCHAR}, #{children_school,jdbcType=VARCHAR}, #{children_address,jdbcType=VARCHAR}, #{children_identity,jdbcType=VARCHAR}, #{children_created_by,jdbcType=VARCHAR})
+    </insert>
+
+    <!-- 根据儿童用户名删除儿童 -->
+    <delete id="deleteChildrenByAccount" parameterType="java.lang.String">
+        DELETE FROM children_info
+        WHERE children_account = #{children_account,jdbcType=VARCHAR}
+    </delete>
+
+    <!-- 查询儿童列表 -->
+    <select id="queryChildrenList" parameterType="xyz.zrxjuly.dao.entity.ChildrenEntity" resultType="xyz.zrxjuly.dao.entity.ChildrenEntity">
+        SELECT children_account, children_password, children_name, children_gender, children_email, children_creation_date, children_birthday, children_age, children_description, children_school, children_address,children_picture,children_identity
+        FROM children_info
+        <where>
+            <if test="children_email != null and children_email != ''">
+                children_email LIKE CONCAT('%', #{children_email,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="children_account != null and children_account != ''">
+                AND children_account = #{children_account,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ORDER BY children_creation_date DESC
+    </select>
+    <!--查询全部儿童的用户名的接口-->
+    <select id="queryAllChildrenAccount" resultType="map">
+        SELECT children_account
+        FROM children_info
+    </select>
+
+    <!-- 根据儿童用户名精准查询志愿者 -->
+    <select id="queryChildrenEntity" parameterType="xyz.zrxjuly.dao.entity.VolunteerEntity" resultType="xyz.zrxjuly.dao.entity.ChildrenEntity">
+        SELECT *
+        FROM children_info
+        WHERE  children_account = #{children_account,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据儿童用户名修改儿童 -->
+    <update id="updateChildrenByAccount" parameterType="xyz.zrxjuly.dao.entity.ChildrenEntity">
+        update children_info
+        set children_password = #{children_password,jdbcType=VARCHAR},
+            children_email = #{children_email,jdbcType=VARCHAR},
+            children_creation_date = #{children_creation_date,jdbcType=TIMESTAMP},
+            children_birthday = #{children_birthday,jdbcType=TIMESTAMP},
+            children_age = #{children_age,jdbcType=VARCHAR},
+            children_picture = #{children_picture,jdbcType=VARCHAR},
+            children_description = #{children_description,jdbcType=VARCHAR},
+            children_address = #{children_address,jdbcType=VARCHAR},
+            children_school = #{children_school,jdbcType=VARCHAR},
+            children_gender = #{children_gender,jdbcType=VARCHAR},
+            children_created_by = #{children_created_by,jdbcType=VARCHAR},
+            children_name = #{children_name,jdbcType=VARCHAR}
+        where children_account = #{children_account,jdbcType=VARCHAR}
+    </update>
+
+</mapper>

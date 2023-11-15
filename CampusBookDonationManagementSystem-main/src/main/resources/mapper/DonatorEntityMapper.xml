@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.zrxjuly.dao.DonatorEntityMapper">
+
+
+    <sql id="Base_Column_List">
+
+    </sql>
+
+    <sql id="Blob_Column_List">
+
+    </sql>
+
+    <insert id="insertSelective" parameterType="xyz.zrxjuly.dao.entity.DonatorEntity">
+        insert into donator_info(donator_account, donator_password, donator_name, donator_gender, donator_email, donator_creation_date, donator_birthday, donator_age, donator_picture, donator_description, donator_address, donator_identity, donator_created_by)
+        values(#{donator_account,jdbcType=VARCHAR}, #{donator_password,jdbcType=VARCHAR}, #{donator_name,jdbcType=VARCHAR}, #{donator_gender,jdbcType=VARCHAR}, #{donator_email,jdbcType=VARCHAR}, #{donator_creation_date,jdbcType=TIMESTAMP}, #{donator_birthday,jdbcType=TIMESTAMP}, #{donator_age,jdbcType=VARCHAR}, #{donator_picture,jdbcType=VARCHAR}, #{donator_description,jdbcType=VARCHAR}, #{donator_address,jdbcType=VARCHAR}, #{donator_identity,jdbcType=VARCHAR}, #{donator_created_by,jdbcType=VARCHAR})
+    </insert>
+    <!--根据捐助者用户名删除捐助者-->
+    <delete id="deleteDonatorByAccount" parameterType="java.lang.String">
+        DELETE FROM donator_info
+        WHERE donator_account = #{donator_account,jdbcType=VARCHAR}
+    </delete>
+    <!--查询捐助者列表-->
+    <select id="queryDonatorList" parameterType="xyz.zrxjuly.dao.entity.DonatorEntity" resultType="xyz.zrxjuly.dao.entity.DonatorEntity">
+        SELECT donator_account, donator_password, donator_name, donator_gender, donator_email, donator_creation_date, donator_birthday, donator_age, donator_description, donator_picture,donator_address
+        FROM donator_info
+        <where>
+            <if test="donator_email != null and donator_email != ''">
+                donator_email LIKE CONCAT('%', #{donator_email,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="donator_account != null and donator_account != ''">
+                AND donator_account = #{donator_account,jdbcType=VARCHAR}
+            </if>
+        </where>
+        ORDER BY donator_creation_date DESC
+    </select>
+
+    <!--查询全部捐赠者的用户名接口-->
+    <select id="queryAllDonatorAccount" resultType="map">
+        SELECT donator_account
+        FROM donator_info
+    </select>
+
+    <!-- 根据捐赠者用户名精准查询志愿者 -->
+    <select id="queryDonatorEntity" parameterType="xyz.zrxjuly.dao.entity.DonatorEntity" resultType="xyz.zrxjuly.dao.entity.DonatorEntity">
+        SELECT *
+        FROM donator_info
+        WHERE  donator_account = #{donator_account,jdbcType=VARCHAR}
+    </select>
+
+    <!-- 根据捐助者用户名修改捐助者 -->
+    <update id="updateDonatorByAccount" parameterType="xyz.zrxjuly.dao.entity.DonatorEntity">
+        update donator_info
+        set donator_password = #{donator_password,jdbcType=VARCHAR},
+            donator_email = #{donator_email,jdbcType=VARCHAR},
+            donator_creation_date = #{donator_creation_date,jdbcType=TIMESTAMP},
+            donator_birthday = #{donator_birthday,jdbcType=TIMESTAMP},
+            donator_age = #{donator_age,jdbcType=VARCHAR},
+            donator_picture = #{donator_picture,jdbcType=VARCHAR},
+            donator_description = #{donator_description,jdbcType=VARCHAR},
+            donator_address = #{donator_address,jdbcType=VARCHAR},
+            donator_gender = #{donator_gender,jdbcType=VARCHAR},
+            donator_created_by = #{donator_created_by,jdbcType=VARCHAR},
+            donator_name = #{donator_name,jdbcType=VARCHAR}
+        where donator_account = #{donator_account,jdbcType=VARCHAR}
+    </update>
+</mapper>
